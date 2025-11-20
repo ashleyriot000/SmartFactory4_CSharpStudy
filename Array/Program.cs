@@ -49,6 +49,9 @@
                 sumArray[5] + sumArray[6] + sumArray[7] + sumArray[8] + sumArray[9];
 
             Console.WriteLine(result);
+
+            string tArray = "안녕하세요";
+            Console.WriteLine($"tArray의 첫글자는 {tArray[0]}이고,\ntArray의 길이는 {tArray.Length}입니다");
         }
     }
 }
