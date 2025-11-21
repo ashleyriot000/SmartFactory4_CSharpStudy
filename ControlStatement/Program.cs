@@ -12,8 +12,8 @@
             //ForForExample();
             //ForeachExample();
             //WhileExample2();
-
-            SmartFactoryTotalControlSystem();
+            //SmartFactoryTotalControlSystem();
+            Lotto();
         }
 
         static void Switch()
@@ -454,8 +454,50 @@
                 }
             }
         }
+
+        static void Lotto()
+        {
+            //한 번 추첨에 번호을 1~46까지 중에서 랜덤하게 6번 뽑는다.
+            //뽑았던 숫자를 중복해서 뽑을 수 없다.
+            Console.WriteLine("==== 즐거운 로또 생활 ====");
+            Console.Write("추첨하고 싶은 횟수를 입력해 주세요 : ");
+
+            int count;
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out count))
+                    break;
+
+                Console.Write("잘못 입력하셨습니다. 다시 입력해주세요 : ");
+            }
+
+            Random rnd = new Random();
+            int[,] lottoNumbers = new int[count, 6];
+            for (int i = 0; i < count; ++i)
+            {
+                for (int j = 0; j < 6; ++j)
+                {
+                    int get = rnd.Next(1, 47);
+                    bool foundSame = false;
+                    for (int k = 0; k < j; ++k)
+                    {
+                        if (lottoNumbers[i, k] == get)
+                        {
+                            foundSame = true;
+                            break;
+                        }
+                    }
+                    if (foundSame)
+                    {
+                        j -= 1;
+                        continue;
+                    }
+
+                    lottoNumbers[i, j] = get;
+                }
+                Console.WriteLine($"[{i + 1:D10}]번째 로또번호는 [{lottoNumbers[i, 0]:D2}], [{lottoNumbers[i, 1]:D2}], [{lottoNumbers[i, 2]:D2}], [{lottoNumbers[i, 3]:D2}], [{lottoNumbers[i, 4]:D2}], [{lottoNumbers[i, 5]:D2}]입니다.");
+            }
+            Console.WriteLine("==========================================");
+        }
     }
-
-
-
 }
