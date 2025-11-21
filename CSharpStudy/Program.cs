@@ -17,7 +17,5 @@
             ConsoleKeyInfo info = Console.ReadKey();
             Console.WriteLine(info.KeyChar);
         }
-
-        static double 
     }
 }
