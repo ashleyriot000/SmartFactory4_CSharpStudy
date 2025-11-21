@@ -5,7 +5,12 @@
         static void Main(string[] args)
         {
             //Switch();
-            For();
+            //For();
+            //ForExample();
+            //ForExample2();
+            //ContinueExample();
+            //ForForExample();
+            ForeachExample();
         }
 
         static void Switch()
@@ -75,8 +80,210 @@
             //그게 아니면 불량. 
             //결과로 몇개의 부품을 생산했고,  정상 부품이 몇개인지 표시하고, 불량 부품의 갯수을 보여주고
             //불량율을 표시해주고 프로그램 종료.
+            //Random rnd = new Random();
+            //rnd.Next(3);
+
             Random rnd = new Random();
-            rnd.Next(3);
+            Console.WriteLine("=== 스탭 갯수 확인 검사 ===");
+            Console.Write("검사할 부품의 갯수를 입력해주세요 : ");
+            int count = int.Parse(Console.ReadLine());
+            int[,] errors = new int[count, 2];
+
+            int product = 0;
+            for (int i = 0; i < errors.GetLength(0); ++i)
+            {
+                errors[i, 0] = rnd.Next(3);
+                errors[i, 1] = rnd.Next(3);
+            }
+
+            for (int i = 0; i < errors.GetLength(0); ++i)
+            {
+                if (errors[i, 0] == errors[i,1])
+                {
+                    product++;
+                }
+            }
+
+            int errorCount = errors.GetLength(0) - product;
+            double errorRate = (double)errorCount / errors.GetLength(0);
+            Console.WriteLine("=== 스탭 갯수 확인 결과 ===");
+            Console.WriteLine($"정상 부품 갯수 : {product} ");
+            Console.WriteLine($"불량 부품 갯수 : {errorCount} ");
+            Console.WriteLine($"불량 율 : {errorRate:P} ");
+        }
+        static void ForExample2()
+        {
+            //목표RPM 입력을 받고,
+            //가속시간을 입력을 받고,
+            //모터 가속을 시작. 출력
+            //매 1초가 지날 때마다 현재 RPM을 표시함.
+            //마지막에는 목표 RPM에 도달했습니다 출력.
+            Console.Write("목표 RPM을 입력해주세요 : ");
+            double targetRPM = double.Parse(Console.ReadLine());
+
+            Console.Write("가속 시간을 입력해주세요 : ");
+            int accTime = int.Parse(Console.ReadLine());
+
+            double currentRPM = 0;
+            double acc = targetRPM / accTime;
+            for (int i = 0; i < accTime; ++i)
+            {
+                Thread.Sleep(1000);
+                currentRPM += acc;
+                Console.WriteLine($"{i + 1}초 경과 현재 RPM은 {currentRPM:F2}입니다");
+            }
+
+            Console.WriteLine("목표 RPM에 도달했습니다.");
+        }
+
+        static void ContinueExample()
+        {
+            Random rnd = new Random();
+            Console.WriteLine("가위바위보 게임을 시작합니다.");
+            Console.Write("게임을 몇 회 진행하시겠습니까? : ");
+            int count = int.Parse(Console.ReadLine());
+            int victory = 0;
+            for(int i = 0; i < count; ++i)
+            {
+                Console.Write($"{i + 1}번째 게임. 원하는 가위바위보를 내주세요.(1:가위 2:바위 3:보) : ");
+                int user = int.Parse(Console.ReadLine());
+                if(user < 1 || user > 3)
+                {
+                    Console.WriteLine("잘못 내셨습니다. 다시 내주세요");
+                    i -= 1;
+                    continue;
+                }
+                int com = rnd.Next(1, 4);
+                Thread.Sleep(500);
+
+                if(user == com)
+                {
+                    Console.WriteLine("비겼습니다. 다시 내주세요");
+                    i -= 1;
+                    continue;
+                }
+                else
+                {
+                    switch(user)
+                    {
+                        case 1:
+                            if(com == 2)
+                            {
+                                Console.WriteLine($"{i+1}번째 게임은 컴퓨터가 이겼습니다.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}번째 게임은 당신이 이겼습니다.");
+                                victory++;
+                            }
+
+                            break;
+                        case 2:
+                            if (com == 3)
+                            {
+                                Console.WriteLine($"{i + 1}번째 게임은 컴퓨터가 이겼습니다.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}번째 게임은 당신이 이겼습니다.");
+                                victory++;
+                            }
+                            break;
+                        case 3:
+                            if (com == 1)
+                            {
+                                Console.WriteLine($"{i + 1}번째 게임은 컴퓨터가 이겼습니다.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}번째 게임은 당신이 이겼습니다.");
+                                victory++;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            Console.WriteLine($"게임이 모두 끝났습니다. 당신은 {victory}회 승리하셨습니다.");
+            Console.WriteLine($"당신의 승률은 {(float)victory / count:P}입니다.");
+
+        }
+        static void ForForExample()
+        {
+            //학생 성적 기록부
+            Console.WriteLine("학생 성적 기록");
+            Console.Write("조회할 학생들의 수는 얼마인가요? : ");
+            int count = int.Parse(Console.ReadLine());
+            int[,] record = new int[count, 10];
+            float[] avg = new float[count];
+            Random rnd = new Random();
+            for(int i = 0; i < record.GetLength(0); i++)
+            {
+                Console.Write($"[{i + 1:D2}번]학생의 성적은 [");
+                int sum = 0;
+                for(int j = 0; j < record.GetLength(1); j++)
+                {
+                    record[i, j] = rnd.Next(40,101);
+                    sum += record[i, j];
+                    if (j < record.GetLength(1) - 1)
+                        Console.Write($"{record[i, j]},");
+                    else
+                        Console.WriteLine($"{record[i, j]}]입니다.");
+                }
+
+                avg[i] = (float)sum / record.GetLength(1);
+                Console.WriteLine($"[{i + 1:D2}번]학생의 평균 점수는 {avg[i]}입니다. ");
+            }            
+        }
+        static void ForeachExample()
+        {
+            //내가 학점관리 프로그램
+            //과목 수강했는지 입력하시오.
+            //과목 수만큼 점수 입력을 받고
+            //평균을 내서 50점 이하이면 F, 60이하 D, 70이하 C, 80이하 B, 90이하 A, 100이하 A++
+            Console.WriteLine("==== 내 학점관리 프로그램 ====");
+            Console.Write("몇과목을 수강하고 있는지 입력해 주세요. : ");
+            int count = int.Parse(Console.ReadLine());
+            int[] points = new int[count];
+
+            for(int i = 0; i < count; ++i)
+            {
+                Console.Write($"{i + 1}번째 과목의 점수를 입력해 주세요. : ");
+                points[i] = int.Parse(Console.ReadLine());
+            }
+
+            int sum = 0;
+            float avg = 0f;
+
+            foreach(var p in points)
+            {
+                sum += p;
+            }
+
+            avg = (float)sum / count;
+            Console.WriteLine($"당신의 평균 점수는 {avg:F2}입니다.");
+            if(avg <= 50.0f)
+            {
+                Console.WriteLine($"당신은 F입니다.");
+            }
+            else if(avg <= 60.0f)
+            {
+                Console.WriteLine($"당신은 D입니다.");
+            }
+            else if(avg <= 70.0f)
+            {
+                Console.WriteLine($"당신은 C입니다.");
+            }
+            else if(avg <= 80.0f)
+            {
+                Console.WriteLine($"당신은 B입니다.");
+            }
+            else if(avg <= 90.0f)
+            {
+                Console.WriteLine($"당신은 A입니다.");
+            }
+            else
+                Console.WriteLine($"당신은 A++입니다.");
         }
     }
 
