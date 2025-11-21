@@ -356,12 +356,14 @@
 
                         for (int i = 0; i < sensorDatas.Length; ++i)
                         {
-                            double temperature;
+                            double temperature = 0;
                             do
                             {
                                 Console.Write($"센서 #{i + 1} 온도 (0 ~ 200C): ");
                                 if (!double.TryParse(Console.ReadLine(), out temperature))
                                 {
+                                    temperature = -1;
+                                    Console.WriteLine("     >> [ERROR] 센서 오류! 허용 범위를 벗어났습니다. 다시 입력하세요 ");
                                     continue;
                                 }
 
@@ -378,7 +380,76 @@
                         Console.WriteLine("데이터 수집 완료! 엔터키를 누르세요...");
                         Console.ReadLine();
                         break;
+                    case "2":
+                        Console.Write("\n[모드 2] 수집된 데이터를 분석합니다");
+                        Thread.Sleep(200);
+                        Console.Write(".");
+                        Thread.Sleep(200);
+                        Console.Write(".");
+                        Thread.Sleep(200);
+                        Console.Write(".");
+                        Thread.Sleep(200);
+                        Console.Write(".");
+                        Thread.Sleep(200);
+                        Console.WriteLine(".");
+
+                        if(!isDataCollected)
+                        {
+                            Console.WriteLine(">> [WARNING] 먼저 데이터를 수집해야 합니다.");
+                            Console.ReadLine();                            
+                            break;  //switch문에서 빠져나감
+                        }
+
+                        double sum = 0;
+                        int validCount = 0;
+                        bool dangerFlag = false;
+
+                        foreach(double temp in sensorDatas)
+                        {
+                            //온도가 0도면 센서 미작동으로 간주하고 계산에서 제외.
+                            if(temp == 0)
+                            {
+                                Console.WriteLine($"   >> [INFO] 0도 데이터 감지(Skip)");
+                                continue;
+                            }
+
+                            if(temp >= 150.0)
+                            {
+                                Console.WriteLine($"    >> [DANGER] 과열 감지!! ({temp}도)");
+                                dangerFlag = true;
+                            }
+
+                            sum += temp;
+                            validCount++;
+                        }
+
+
+                        if(validCount > 0)
+                        {
+                            double avg = sum / validCount;
+                            Console.WriteLine($"\n--- 온도 분석 결과 ---");
+                            Console.WriteLine($"평균 온도 : {avg:F2}도");
+
+                            if (dangerFlag)
+                                Console.WriteLine("시스템 상태 : [비상] 냉각기 가동 필요!!!");
+                            else
+                                Console.WriteLine("시스템 상태 : [정상] 가동 중");
+                        }
+                        else
+                        {
+                            Console.WriteLine("유효한 데이터가 없습니다.");
+                        }
+
+                        Console.WriteLine("엔터키를 누르면 메뉴로 돌아갑니다.");
+                        Console.ReadLine();                            
+                        break;
+                    case "3":
+                        Console.WriteLine("시스템을 종료합니다....");
+                        systemRunning = false;  //While 루프 조건 해제
+                        break;      //swtich문 탈출
                     default:
+                        Console.WriteLine("잘못된 입력입니다. 다시 선택해주세요.");
+                        Console.ReadLine();
                         break;
                 }
             }
