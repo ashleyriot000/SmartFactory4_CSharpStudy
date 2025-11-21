@@ -10,7 +10,10 @@
             //ForExample2();
             //ContinueExample();
             //ForForExample();
-            ForeachExample();
+            //ForeachExample();
+            //WhileExample2();
+
+            SmartFactoryTotalControlSystem();
         }
 
         static void Switch()
@@ -285,7 +288,103 @@
             else
                 Console.WriteLine($"당신은 A++입니다.");
         }
+        static void WhileExample()
+        {
+            int x = 0;
+            while (x < 10)
+            {
+                Console.WriteLine($"X는 {x}입니다");
+                x++;
+            };
+
+            //좋지 못한 While 사용법
+            //bool isEnd = false;
+            //while(!isEnd)
+            //{
+            //    Console.WriteLine($"아직 안끝났습니까?");
+            //}
+        }
+        static void DoWhileExample()
+        {
+            int y = 10;
+            do
+            {
+                Console.WriteLine($"Y는 {y}입니다.");
+                y++;
+            }
+            while (y < 10);
+        }
+        static void WhileExample2()
+        {
+            while(true)
+            {
+                Console.Write("당신의 이름을 입력해주세요 : ");
+                string name = Console.ReadLine();
+                if (name == "End")
+                    break;
+
+                Thread.Sleep(1000);
+                Console.Clear();
+            }
+        }
+
+
+        static void SmartFactoryTotalControlSystem()
+        {
+            //센서데이터를 저장할 배열(최대 5개)
+            double[] sensorDatas = new double[5];
+            //센서 데이터의 수집 여부
+            bool isDataCollected = false;
+            //시스템 가동 여부
+            bool systemRunning = true;
+
+            while(systemRunning)
+            {
+                Console.Clear();
+                Console.WriteLine("=== 스마트 팩토리 통합 제어 콘솔 ===");
+                Console.WriteLine("1. 센서 데이터 수집 (Input)");
+                Console.WriteLine("2. 데이터 분석 및 진단 (Analyze)");
+                Console.WriteLine("3. 시스템 종료 (Exit)");
+                Console.Write(">> 기능을 선택하세요: ");
+
+                string input = Console.ReadLine();
+
+                switch(input)
+                {
+                    case "1":
+                        Console.WriteLine("\n[모드 1] 온도 센서 데이터 입력을 시작합니다.");
+
+                        for (int i = 0; i < sensorDatas.Length; ++i)
+                        {
+                            double temperature;
+                            do
+                            {
+                                Console.Write($"센서 #{i + 1} 온도 (0 ~ 200C): ");
+                                if (!double.TryParse(Console.ReadLine(), out temperature))
+                                {
+                                    continue;
+                                }
+
+
+                                if (temperature < 0 || temperature > 200)
+                                {
+                                    Console.WriteLine("     >> [ERROR] 센서 오류! 허용 범위를 벗어났습니다. 다시 입력하세요 ");
+                                }
+                            } while (temperature < 0 || temperature > 200);
+
+                            sensorDatas[i] = temperature;
+                        }
+                        isDataCollected = true;
+                        Console.WriteLine("데이터 수집 완료! 엔터키를 누르세요...");
+                        Console.ReadLine();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
+
 
 
 }
