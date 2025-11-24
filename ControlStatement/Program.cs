@@ -1,5 +1,7 @@
-﻿namespace ControlStatement
-{
+﻿using System.Runtime.CompilerServices;
+
+namespace ControlStatement
+{    
     internal class Program
     {
         static void Main(string[] args)
@@ -12,8 +14,9 @@
             //ForForExample();
             //ForeachExample();
             //WhileExample2();
-            //SmartFactoryTotalControlSystem();
-            Lotto();
+            SmartFactoryTotalControlSystem();
+            //Lotto();
+            //UpDownQuiz();
         }
 
         static void Switch()
@@ -339,120 +342,142 @@
             bool systemRunning = true;
 
             while(systemRunning)
-            {
-                Console.Clear();
-                Console.WriteLine("=== 스마트 팩토리 통합 제어 콘솔 ===");
-                Console.WriteLine("1. 센서 데이터 수집 (Input)");
-                Console.WriteLine("2. 데이터 분석 및 진단 (Analyze)");
-                Console.WriteLine("3. 시스템 종료 (Exit)");
-                Console.Write(">> 기능을 선택하세요: ");
+            {                
+                ShowMenu();
 
                 string input = Console.ReadLine();
 
                 switch(input)
                 {
                     case "1":
-                        Console.WriteLine("\n[모드 1] 온도 센서 데이터 입력을 시작합니다.");
-
-                        for (int i = 0; i < sensorDatas.Length; ++i)
-                        {
-                            double temperature = 0;
-                            do
-                            {
-                                Console.Write($"센서 #{i + 1} 온도 (0 ~ 200C): ");
-                                if (!double.TryParse(Console.ReadLine(), out temperature))
-                                {
-                                    temperature = -1;
-                                    Console.WriteLine("     >> [ERROR] 센서 오류! 허용 범위를 벗어났습니다. 다시 입력하세요 ");
-                                    continue;
-                                }
-
-
-                                if (temperature < 0 || temperature > 200)
-                                {
-                                    Console.WriteLine("     >> [ERROR] 센서 오류! 허용 범위를 벗어났습니다. 다시 입력하세요 ");
-                                }
-                            } while (temperature < 0 || temperature > 200);
-
-                            sensorDatas[i] = temperature;
-                        }
+                        InputSensorData(sensorDatas);
                         isDataCollected = true;
-                        Console.WriteLine("데이터 수집 완료! 엔터키를 누르세요...");
-                        Console.ReadLine();
                         break;
                     case "2":
-                        Console.Write("\n[모드 2] 수집된 데이터를 분석합니다");
-                        Thread.Sleep(200);
-                        Console.Write(".");
-                        Thread.Sleep(200);
-                        Console.Write(".");
-                        Thread.Sleep(200);
-                        Console.Write(".");
-                        Thread.Sleep(200);
-                        Console.Write(".");
-                        Thread.Sleep(200);
-                        Console.WriteLine(".");
-
-                        if(!isDataCollected)
-                        {
-                            Console.WriteLine(">> [WARNING] 먼저 데이터를 수집해야 합니다.");
-                            Console.ReadLine();                            
-                            break;  //switch문에서 빠져나감
-                        }
-
-                        double sum = 0;
-                        int validCount = 0;
-                        bool dangerFlag = false;
-
-                        foreach(double temp in sensorDatas)
-                        {
-                            //온도가 0도면 센서 미작동으로 간주하고 계산에서 제외.
-                            if(temp == 0)
-                            {
-                                Console.WriteLine($"   >> [INFO] 0도 데이터 감지(Skip)");
-                                continue;
-                            }
-
-                            if(temp >= 150.0)
-                            {
-                                Console.WriteLine($"    >> [DANGER] 과열 감지!! ({temp}도)");
-                                dangerFlag = true;
-                            }
-
-                            sum += temp;
-                            validCount++;
-                        }
-
-
-                        if(validCount > 0)
-                        {
-                            double avg = sum / validCount;
-                            Console.WriteLine($"\n--- 온도 분석 결과 ---");
-                            Console.WriteLine($"평균 온도 : {avg:F2}도");
-
-                            if (dangerFlag)
-                                Console.WriteLine("시스템 상태 : [비상] 냉각기 가동 필요!!!");
-                            else
-                                Console.WriteLine("시스템 상태 : [정상] 가동 중");
-                        }
-                        else
-                        {
-                            Console.WriteLine("유효한 데이터가 없습니다.");
-                        }
-
-                        Console.WriteLine("엔터키를 누르면 메뉴로 돌아갑니다.");
-                        Console.ReadLine();                            
+                        AnalystData(sensorDatas, isDataCollected);                                            
                         break;
                     case "3":
-                        Console.WriteLine("시스템을 종료합니다....");
+                        Exit();
                         systemRunning = false;  //While 루프 조건 해제
                         break;      //swtich문 탈출
                     default:
-                        Console.WriteLine("잘못된 입력입니다. 다시 선택해주세요.");
-                        Console.ReadLine();
+                        Pause("잘못된 입력입니다.");                        
                         break;
                 }
             }
+        }
+
+        static  void ShowMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("=== 스마트 팩토리 통합 제어 콘솔 ===");
+            Console.WriteLine("1. 센서 데이터 수집 (Input)");
+            Console.WriteLine("2. 데이터 분석 및 진단 (Analyze)");
+            Console.WriteLine("3. 시스템 종료 (Exit)");
+            Console.Write(">> 기능을 선택하세요: ");
+        }
+
+        static void InputSensorData(double[] datas)
+        {
+            Console.WriteLine("\n[모드 1] 온도 센서 데이터 입력을 시작합니다.");
+            for (int i = 0; i < datas.Length; ++i)
+            {
+                double temperature = 0;
+                do
+                {
+                    Console.Write($"센서 #{i + 1} 온도 (0 ~ 200C): ");
+                    if (!double.TryParse(Console.ReadLine(), out temperature))
+                    {
+                        temperature = -1;
+                        Console.WriteLine("     >> [ERROR] 센서 오류! 허용 범위를 벗어났습니다. 다시 입력하세요 ");
+                        continue;
+                    }
+
+
+                    if (temperature < 0 || temperature > 200)
+                    {
+                        Console.WriteLine("     >> [ERROR] 센서 오류! 허용 범위를 벗어났습니다. 다시 입력하세요 ");
+                    }
+                } while (temperature < 0 || temperature > 200);
+
+                datas[i] = temperature;
+            }            
+
+            Pause("데이터 수집 완료!");
+        }
+        static void AnalystData(double[] datas, bool ready)
+        {
+            Console.Write("\n[모드 2] 수집된 데이터를 분석합니다");
+            Thread.Sleep(200);
+            Console.Write(".");
+            Thread.Sleep(200);
+            Console.Write(".");
+            Thread.Sleep(200);
+            Console.Write(".");
+            Thread.Sleep(200);
+            Console.Write(".");
+            Thread.Sleep(200);
+            Console.WriteLine(".");
+
+            if (!ready)
+            {
+                Console.WriteLine(">> [WARNING] 먼저 데이터를 수집해야 합니다.");
+                Console.ReadLine();
+                return;
+            }
+
+            double sum = 0;
+            int validCount = 0;
+            bool dangerFlag = false;
+
+            foreach (double temp in datas)
+            {
+                //온도가 0도면 센서 미작동으로 간주하고 계산에서 제외.
+                if (temp == 0)
+                {
+                    Console.WriteLine($"   >> [INFO] 0도 데이터 감지(Skip)");
+                    continue;
+                }
+
+                if (temp >= 150.0)
+                {
+                    Console.WriteLine($"    >> [DANGER] 과열 감지!! ({temp}도)");
+                    dangerFlag = true;
+                }
+
+                sum += temp;
+                validCount++;
+            }
+
+
+            if (validCount > 0)
+            {
+                double avg = sum / validCount;
+                Console.WriteLine($"\n--- 온도 분석 결과 ---");
+                Console.WriteLine($"평균 온도 : {avg:F2}도");
+
+                if (dangerFlag)
+                    Console.WriteLine("시스템 상태 : [비상] 냉각기 가동 필요!!!");
+                else
+                    Console.WriteLine("시스템 상태 : [정상] 가동 중");
+            }
+            else
+            {
+                Console.WriteLine("유효한 데이터가 없습니다.");
+            }
+
+            Pause("분석을 완료했습니다.");
+        }
+
+        static void Pause(string prefix)
+        {
+            Console.WriteLine($"{prefix} 엔터키를 누르세요...");
+            Console.ReadLine();
+        }
+        static void Exit()
+        {
+            Console.WriteLine("시스템을 종료합니다....");
+            Console.ReadLine();
         }
 
         static void Lotto()
@@ -498,6 +523,46 @@
                 Console.WriteLine($"[{i + 1:D10}]번째 로또번호는 [{lottoNumbers[i, 0]:D2}], [{lottoNumbers[i, 1]:D2}], [{lottoNumbers[i, 2]:D2}], [{lottoNumbers[i, 3]:D2}], [{lottoNumbers[i, 4]:D2}], [{lottoNumbers[i, 5]:D2}]입니다.");
             }
             Console.WriteLine("==========================================");
+        }
+
+        static void UpDownQuiz()
+        {
+            // 1. 컴퓨터가 1~100 사이의 랜덤한 숫자 하나를 뽑고
+            // 2. 유저의 입력을 받아 정답을 맞추는 퀴즈를 만들어보자(★ 1~100 사이의 숫자를 맞춰보세요! ★)
+            // 3. 정답이 아닐 경우 - 정답보다 작으면 UP!, 정답보다 크면 Down!을 출력.
+            // 4. 정답을 맞출 때까지 무한 반복하고 정답을 맞추면 몇번 만에 맞췄는지 출력하고 프로그램 종료.
+
+            Random rnd = new Random();
+            int comNumber = rnd.Next(1, 101);
+            int count = 0;
+
+            Console.WriteLine("★ 1 ~ 100 사이의 숫자를 맞춰보세요 ★");
+            while(true)
+            {
+                Console.Write("숫자 입력 : ");
+                string input = Console.ReadLine(); //입력받기
+                int myNumber = int.Parse(input);  //int(정수)로 변환
+
+                count++;
+
+                if(myNumber == comNumber)
+                {
+                    //정답일 때 
+                    Console.WriteLine("정답입니다! 축하해요!!!");
+                    Console.WriteLine($"{count}번 만에 맞췄습니다.");
+                    break;
+                }
+                else if(myNumber > comNumber)
+                {
+                    //정답보다 높게 불렀을 경우
+                    Console.WriteLine("Down!! (더 작은 숫자입니다)");
+                }
+                else
+                {
+                    //정답보다 낮게 불렀을 경우
+                    Console.WriteLine("Up!! (더 큰 숫자입니다)");
+                }
+            }
         }
     }
 }
