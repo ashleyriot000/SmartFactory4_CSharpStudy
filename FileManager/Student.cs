@@ -25,5 +25,10 @@ namespace FileManager
         {
             Console.WriteLine($"{lastName}{firstName} : {age} => 점수 {point}");
         }
+
+        public override string ToString()
+        {
+            return $"{lastName},{firstName},{age},{point}";
+        }
     }
 }
